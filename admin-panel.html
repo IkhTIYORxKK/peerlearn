@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PeerLearn - Admin Panel</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Umumiy stillar */
         :root {
             --primary: #4a6bff;
             --primary-dark: #3a5bef;
@@ -262,12 +261,12 @@
             color: #2ecc71;
         }
 
-        .stats-icon.revenue {
+        .stats-icon.teachers {
             background: rgba(155, 89, 182, 0.1);
             color: #9b59b6;
         }
 
-        .stats-icon.courses {
+        .stats-icon.students {
             background: rgba(241, 196, 15, 0.1);
             color: #f1c40f;
         }
@@ -442,6 +441,76 @@
             color: white;
         }
 
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
         /* Responsive */
         @media (max-width: 992px) {
             .sidebar {
@@ -466,10 +535,6 @@
         }
 
         @media (max-width: 768px) {
-            .header-right .search {
-                display: none;
-            }
-
             .stats-cards {
                 grid-template-columns: 1fr 1fr;
             }
@@ -485,8 +550,13 @@
                 align-items: flex-start;
             }
 
-            .card-header .btn {
-                margin-top: 10px;
+            .actions {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .btn {
+                width: 100%;
             }
         }
     </style>
@@ -509,7 +579,6 @@
             <div class="menu-item">
                 <i class="fas fa-users"></i>
                 <span>Foydalanuvchilar</span>
-                <span class="badge">24</span>
             </div>
             <div class="menu-item">
                 <i class="fas fa-chalkboard-teacher"></i>
@@ -526,17 +595,12 @@
             <div class="menu-item">
                 <i class="fas fa-comments"></i>
                 <span>Guruh muhokamalari</span>
-                <span class="badge">5</span>
             </div>
 
             <h3>Sozlamalar</h3>
             <div class="menu-item">
                 <i class="fas fa-cog"></i>
                 <span>Tizim sozlamalari</span>
-            </div>
-            <div class="menu-item">
-                <i class="fas fa-user-shield"></i>
-                <span>Adminlar</span>
             </div>
         </div>
     </div>
@@ -581,11 +645,6 @@
                         <li>Boshqaruv paneli</li>
                     </ul>
                 </div>
-                <div>
-                    <button class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Yangi qo'shish
-                    </button>
-                </div>
             </div>
 
             <!-- Stats Cards -->
@@ -596,7 +655,7 @@
                     </div>
                     <div class="stats-info">
                         <h3>Foydalanuvchilar</h3>
-                        <h2>1,254</h2>
+                        <h2 id="total-users">0</h2>
                     </div>
                 </div>
 
@@ -606,164 +665,56 @@
                     </div>
                     <div class="stats-info">
                         <h3>Faol sessiyalar</h3>
-                        <h2>48</h2>
+                        <h2 id="active-sessions">0</h2>
                     </div>
                 </div>
 
                 <div class="stats-card">
-                    <div class="stats-icon revenue">
-                        <i class="fas fa-dollar-sign"></i>
+                    <div class="stats-icon teachers">
+                        <i class="fas fa-chalkboard-teacher"></i>
                     </div>
                     <div class="stats-info">
-                        <h3>Daromad</h3>
-                        <h2>$5,320</h2>
+                        <h3>O'qituvchilar</h3>
+                        <h2 id="total-teachers">0</h2>
                     </div>
                 </div>
 
                 <div class="stats-card">
-                    <div class="stats-icon courses">
-                        <i class="fas fa-book"></i>
+                    <div class="stats-icon students">
+                        <i class="fas fa-graduation-cap"></i>
                     </div>
                     <div class="stats-info">
-                        <h3>Kurslar</h3>
-                        <h2>36</h2>
+                        <h3>Talabalar</h3>
+                        <h2 id="total-students">0</h2>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Users -->
+            <!-- Sessions Table -->
             <div class="card">
                 <div class="card-header">
-                    <h3>Yangi foydalanuvchilar</h3>
-                    <button class="btn btn-outline">
-                        <i class="fas fa-ellipsis-v"></i>
+                    <h3>Barcha sessiyalar</h3>
+                    <button class="btn btn-primary" id="add-session-btn">
+                        <i class="fas fa-plus"></i> Yangi sessiya
                     </button>
                 </div>
                 <div class="card-body">
-                    <table>
+                    <table id="sessions-table">
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Foydalanuvchi</th>
-                                <th>Elektron pochta</th>
-                                <th>Rol</th>
+                                <th>Nomi</th>
+                                <th>Fani</th>
+                                <th>O'qituvchi</th>
+                                <th>Vaqti</th>
+                                <th>Davomiyligi</th>
+                                <th>Ishtirokchilar</th>
                                 <th>Holat</th>
                                 <th>Harakatlar</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>#1254</td>
-                                <td>
-                                    <div style="display: flex; align-items: center;">
-                                        <img src="https://randomuser.me/api/portraits/women/42.jpg" width="40" height="40" style="border-radius: 50%; margin-right: 10px;">
-                                        <div>
-                                            <div>Sarah Johnson</div>
-                                            <small>2023-06-15</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>sarah@example.com</td>
-                                <td><span class="badge badge-primary">Talaba</span></td>
-                                <td><span class="badge badge-success">Faol</span></td>
-                                <td>
-                                    <div class="actions">
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#1253</td>
-                                <td>
-                                    <div style="display: flex; align-items: center;">
-                                        <img src="https://randomuser.me/api/portraits/men/32.jpg" width="40" height="40" style="border-radius: 50%; margin-right: 10px;">
-                                        <div>
-                                            <div>David Wilson</div>
-                                            <small>2023-06-14</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>david@example.com</td>
-                                <td><span class="badge badge-warning">O'qituvchi</span></td>
-                                <td><span class="badge badge-success">Faol</span></td>
-                                <td>
-                                    <div class="actions">
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#1252</td>
-                                <td>
-                                    <div style="display: flex; align-items: center;">
-                                        <img src="https://randomuser.me/api/portraits/women/68.jpg" width="40" height="40" style="border-radius: 50%; margin-right: 10px;">
-                                        <div>
-                                            <div>Maria Garcia</div>
-                                            <small>2023-06-13</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>maria@example.com</td>
-                                <td><span class="badge badge-primary">Talaba</span></td>
-                                <td><span class="badge badge-success">Faol</span></td>
-                                <td>
-                                    <div class="actions">
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#1251</td>
-                                <td>
-                                    <div style="display: flex; align-items: center;">
-                                        <img src="https://randomuser.me/api/portraits/men/75.jpg" width="40" height="40" style="border-radius: 50%; margin-right: 10px;">
-                                        <div>
-                                            <div>Michael Brown</div>
-                                            <small>2023-06-12</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>michael@example.com</td>
-                                <td><span class="badge badge-primary">Talaba</span></td>
-                                <td><span class="badge badge-danger">Bloklangan</span></td>
-                                <td>
-                                    <div class="actions">
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                            <!-- Sessions will be loaded here -->
                         </tbody>
                     </table>
 
@@ -785,121 +736,410 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- Recent Sessions -->
-            <div class="card">
-                <div class="card-header">
-                    <h3>Yaqindagi sessiyalar</h3>
-                    <button class="btn btn-outline">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
+    <!-- Add Session Modal -->
+    <div class="modal" id="session-modal">
+        <div class="modal-content">
+            <div class="modal-title">Yangi sessiya qo'shish</div>
+            <form id="session-form">
+                <div class="form-group">
+                    <label for="session-name">Sessiya nomi</label>
+                    <input type="text" id="session-name" class="form-control" required>
                 </div>
-                <div class="card-body">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Mavzu</th>
-                                <th>O'qituvchi</th>
-                                <th>Talabalar</th>
-                                <th>Boshlanish vaqti</th>
-                                <th>Holat</th>
-                                <th>Harakatlar</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>#S145</td>
-                                <td>Python dasturlash asoslari</td>
-                                <td>David Wilson</td>
-                                <td>5/8</td>
-                                <td>2023-06-16 14:00</td>
-                                <td><span class="badge badge-primary">Rejalashtirilgan</span></td>
-                                <td>
-                                    <div class="actions">
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#S144</td>
-                                <td>Algebra I</td>
-                                <td>Sarah Johnson</td>
-                                <td>3/5</td>
-                                <td>2023-06-15 10:30</td>
-                                <td><span class="badge badge-success">Yakunlangan</span></td>
-                                <td>
-                                    <div class="actions">
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#S143</td>
-                                <td>Fizika: Nyuton qonunlari</td>
-                                <td>Robert Smith</td>
-                                <td>4/6</td>
-                                <td>2023-06-14 16:00</td>
-                                <td><span class="badge badge-success">Yakunlangan</span></td>
-                                <td>
-                                    <div class="actions">
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-outline btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="form-group">
+                    <label for="session-subject">Fanni tanlang</label>
+                    <select id="session-subject" class="form-control" required>
+                        <option value="">Tanlang</option>
+                        <option value="math">Matematika</option>
+                        <option value="physics">Fizika</option>
+                        <option value="programming">Dasturlash</option>
+                        <option value="english">Ingliz tili</option>
+                    </select>
                 </div>
+                <div class="form-group">
+                    <label for="session-teacher">O'qituvchi</label>
+                    <select id="session-teacher" class="form-control" required>
+                        <option value="">Tanlang</option>
+                        <!-- Teachers will be loaded here -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="session-time">Boshlanish vaqti</label>
+                    <input type="datetime-local" id="session-time" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="session-duration">Davomiyligi (daqiqa)</label>
+                    <input type="number" id="session-duration" class="form-control" min="30" max="180" value="60" required>
+                </div>
+                <div class="form-group">
+                    <label for="session-capacity">Maksimal ishtirokchilar soni</label>
+                    <input type="number" id="session-capacity" class="form-control" min="1" max="20" value="10" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="cancel-session-btn">Bekor qilish</button>
+                    <button type="submit" class="btn btn-primary" id="save-session-btn">Saqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirm-modal">
+        <div class="modal-content">
+            <div class="modal-title" id="confirm-title">Sessiyani o'chirish</div>
+            <p id="confirm-message">Haqiqatan ham ushbu sessiyani o'chirmoqchimisiz?</p>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" id="cancel-confirm-btn">Yo'q</button>
+                <button type="button" class="btn btn-danger" id="confirm-btn">Ha, o'chirish</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Sidebar toggle
-        document.querySelector('.toggle-sidebar').addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('active');
-            document.querySelector('.main-content').classList.toggle('active');
-        });
+        // Database simulation using localStorage
+        const DB = {
+            get: (key) => {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : null;
+            },
+            set: (key, value) => {
+                localStorage.setItem(key, JSON.stringify(value));
+            }
+        };
 
-        // Menu item active state
-        const menuItems = document.querySelectorAll('.menu-item');
-        menuItems.forEach(item => {
-            item.addEventListener('click', function() {
-                menuItems.forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
+        // Initialize database if not exists
+        if (!DB.get('sessions')) {
+            DB.set('sessions', [
+                {
+                    id: 1,
+                    title: "Algebra asoslari",
+                    subject: "math",
+                    teacher: { id: 1, name: "Sarah Johnson", avatar: "https://randomuser.me/api/portraits/women/42.jpg" },
+                    time: "2023-06-16T15:00",
+                    duration: 60,
+                    capacity: 5,
+                    participants: ["student1", "student2"],
+                    status: "scheduled"
+                },
+                {
+                    id: 2,
+                    title: "Python dasturlash",
+                    subject: "programming",
+                    teacher: { id: 2, name: "Mike Chen", avatar: "https://randomuser.me/api/portraits/men/45.jpg" },
+                    time: "2023-06-17T10:00",
+                    duration: 90,
+                    capacity: 3,
+                    participants: ["student3"],
+                    status: "scheduled"
+                },
+                {
+                    id: 3,
+                    title: "Nyuton qonunlari",
+                    subject: "physics",
+                    teacher: { id: 3, name: "David Wilson", avatar: "https://randomuser.me/api/portraits/men/32.jpg" },
+                    time: "2023-06-16T17:30",
+                    duration: 45,
+                    capacity: 4,
+                    participants: ["student1", "student4"],
+                    status: "scheduled"
+                }
+            ]);
+        }
+
+        if (!DB.get('users')) {
+            DB.set('users', [
+                { id: 1, name: "Sarah Johnson", email: "sarah@example.com", role: "teacher", avatar: "https://randomuser.me/api/portraits/women/42.jpg" },
+                { id: 2, name: "Mike Chen", email: "mike@example.com", role: "teacher", avatar: "https://randomuser.me/api/portraits/men/45.jpg" },
+                { id: 3, name: "David Wilson", email: "david@example.com", role: "teacher", avatar: "https://randomuser.me/api/portraits/men/32.jpg" },
+                { id: 4, name: "John Doe", email: "john@example.com", role: "student", avatar: "https://randomuser.me/api/portraits/men/22.jpg" },
+                { id: 5, name: "Maria Garcia", email: "maria@example.com", role: "student", avatar: "https://randomuser.me/api/portraits/women/68.jpg" }
+            ]);
+        }
+
+        // DOM Elements
+        const sidebar = document.querySelector('.sidebar');
+        const toggleSidebar = document.querySelector('.toggle-sidebar');
+        const sessionsTable = document.querySelector('#sessions-table tbody');
+        const addSessionBtn = document.getElementById('add-session-btn');
+        const sessionModal = document.getElementById('session-modal');
+        const sessionForm = document.getElementById('session-form');
+        const cancelSessionBtn = document.getElementById('cancel-session-btn');
+        const confirmModal = document.getElementById('confirm-modal');
+        const cancelConfirmBtn = document.getElementById('cancel-confirm-btn');
+        const confirmBtn = document.getElementById('confirm-btn');
+        const teacherSelect = document.getElementById('session-teacher');
+
+        // Stats elements
+        const totalUsersEl = document.getElementById('total-users');
+        const activeSessionsEl = document.getElementById('active-sessions');
+        const totalTeachersEl = document.getElementById('total-teachers');
+        const totalStudentsEl = document.getElementById('total-students');
+
+        // State variables
+        let currentSessionId = null;
+        let sessions = DB.get('sessions');
+        let users = DB.get('users');
+
+        // Initialize the app
+        function init() {
+            loadSessions();
+            loadTeachers();
+            updateStats();
+            setupEventListeners();
+        }
+
+        // Load sessions into the table
+        function loadSessions() {
+            sessionsTable.innerHTML = '';
+            
+            if (sessions.length === 0) {
+                sessionsTable.innerHTML = '<tr><td colspan="9" style="text-align: center;">Sessiyalar mavjud emas</td></tr>';
+                return;
+            }
+            
+            sessions.forEach(session => {
+                const date = new Date(session.time);
+                const timeString = date.toLocaleString('en-US', {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                const participantsCount = session.participants.length;
+                const capacityString = `${participantsCount}/${session.capacity}`;
+                
+                let statusBadge = '';
+                if (session.status === 'scheduled') {
+                    statusBadge = '<span class="badge badge-primary">Rejalashtirilgan</span>';
+                } else if (session.status === 'completed') {
+                    statusBadge = '<span class="badge badge-success">Yakunlangan</span>';
+                } else if (session.status === 'cancelled') {
+                    statusBadge = '<span class="badge badge-danger">Bekor qilingan</span>';
+                }
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${session.id}</td>
+                    <td>${session.title}</td>
+                    <td>${getSubjectName(session.subject)}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <img src="${session.teacher.avatar}" width="25" height="25" style="border-radius: 50%;">
+                            <span>${session.teacher.name}</span>
+                        </div>
+                    </td>
+                    <td>${timeString}</td>
+                    <td>${session.duration} min</td>
+                    <td>${capacityString}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn btn-outline btn-sm edit-btn" data-id="${session.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-outline btn-sm delete-btn" data-id="${session.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                sessionsTable.appendChild(tr);
             });
-        });
+            
+            // Add event listeners to action buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const sessionId = this.dataset.id;
+                    editSession(sessionId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const sessionId = this.dataset.id;
+                    showConfirmModal(sessionId);
+                });
+            });
+        }
 
-        // Confirm before delete
-        const deleteButtons = document.querySelectorAll('.btn-outline .fa-trash');
-        deleteButtons.forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (confirm('Ushbu foydalanuvchini o\'chirishni tasdiqlaysizmi?')) {
-                    // In a real app, you would make an API call here
-                    const row = this.closest('tr');
-                    row.style.opacity = '0';
-                    setTimeout(() => {
-                        row.remove();
-                    }, 300);
+        // Load teachers into select dropdown
+        function loadTeachers() {
+            teacherSelect.innerHTML = '<option value="">Tanlang</option>';
+            
+            const teachers = users.filter(user => user.role === 'teacher');
+            teachers.forEach(teacher => {
+                const option = document.createElement('option');
+                option.value = teacher.id;
+                option.textContent = teacher.name;
+                teacherSelect.appendChild(option);
+            });
+        }
+
+        // Get subject name by key
+        function getSubjectName(key) {
+            const subjects = {
+                'math': 'Matematika',
+                'physics': 'Fizika',
+                'programming': 'Dasturlash',
+                'english': 'Ingliz tili'
+            };
+            return subjects[key] || key;
+        }
+
+        // Update statistics
+        function updateStats() {
+            const users = DB.get('users');
+            const sessions = DB.get('sessions');
+            
+            totalUsersEl.textContent = users.length;
+            activeSessionsEl.textContent = sessions.filter(s => s.status === 'scheduled').length;
+            totalTeachersEl.textContent = users.filter(u => u.role === 'teacher').length;
+            totalStudentsEl.textContent = users.filter(u => u.role === 'student').length;
+        }
+
+        // Show add session modal
+        function showAddModal() {
+            currentSessionId = null;
+            sessionForm.reset();
+            sessionModal.style.display = 'flex';
+        }
+
+        // Show edit session modal
+        function editSession(sessionId) {
+            const session = sessions.find(s => s.id == sessionId);
+            if (!session) return;
+            
+            currentSessionId = sessionId;
+            
+            document.getElementById('session-name').value = session.title;
+            document.getElementById('session-subject').value = session.subject;
+            document.getElementById('session-teacher').value = session.teacher.id;
+            document.getElementById('session-time').value = session.time.substring(0, 16);
+            document.getElementById('session-duration').value = session.duration;
+            document.getElementById('session-capacity').value = session.capacity;
+            
+            sessionModal.style.display = 'flex';
+        }
+
+        // Show confirmation modal
+        function showConfirmModal(sessionId) {
+            currentSessionId = sessionId;
+            confirmModal.style.display = 'flex';
+        }
+
+        // Save session (add or update)
+        function saveSession() {
+            const title = document.getElementById('session-name').value;
+            const subject = document.getElementById('session-subject').value;
+            const teacherId = document.getElementById('session-teacher').value;
+            const time = document.getElementById('session-time').value;
+            const duration = document.getElementById('session-duration').value;
+            const capacity = document.getElementById('session-capacity').value;
+            
+            if (!title || !subject || !teacherId || !time || !duration || !capacity) {
+                alert('Iltimos, barcha maydonlarni to\'ldiring');
+                return;
+            }
+            
+            const teacher = users.find(u => u.id == teacherId && u.role === 'teacher');
+            if (!teacher) {
+                alert('O\'qituvchi topilmadi');
+                return;
+            }
+            
+            const sessionData = {
+                title,
+                subject,
+                teacher: {
+                    id: teacher.id,
+                    name: teacher.name,
+                    avatar: teacher.avatar
+                },
+                time,
+                duration: parseInt(duration),
+                capacity: parseInt(capacity),
+                participants: [],
+                status: "scheduled"
+            };
+            
+            if (currentSessionId) {
+                // Update existing session
+                const index = sessions.findIndex(s => s.id == currentSessionId);
+                if (index !== -1) {
+                    // Keep existing participants
+                    sessionData.participants = sessions[index].participants;
+                    sessions[index] = { ...sessions[index], ...sessionData };
+                }
+            } else {
+                // Add new session
+                const newId = sessions.length > 0 ? Math.max(...sessions.map(s => s.id)) + 1 : 1;
+                sessionData.id = newId;
+                sessions.push(sessionData);
+            }
+            
+            // Save to database
+            DB.set('sessions', sessions);
+            
+            // Reload data
+            loadSessions();
+            updateStats();
+            sessionModal.style.display = 'none';
+        }
+
+        // Delete session
+        function deleteSession() {
+            sessions = sessions.filter(s => s.id != currentSessionId);
+            DB.set('sessions', sessions);
+            
+            loadSessions();
+            updateStats();
+            confirmModal.style.display = 'none';
+        }
+
+        // Close modal
+        function closeModal() {
+            sessionModal.style.display = 'none';
+            confirmModal.style.display = 'none';
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Toggle sidebar
+            toggleSidebar.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+            
+            // Add session button
+            addSessionBtn.addEventListener('click', showAddModal);
+            
+            // Cancel session button
+            cancelSessionBtn.addEventListener('click', closeModal);
+            
+            // Session form submission
+            sessionForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveSession();
+            });
+            
+            // Confirmation modal buttons
+            cancelConfirmBtn.addEventListener('click', closeModal);
+            confirmBtn.addEventListener('click', deleteSession);
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === sessionModal || e.target === confirmModal) {
+                    closeModal();
                 }
             });
-        });
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
