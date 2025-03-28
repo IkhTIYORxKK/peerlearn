@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeerLearn - Tizimga kirish</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Umumiy stillar */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        a {
+            text-decoration: none;
+            color: #4a6bff;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #4a6bff;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #3a5bef;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #4a6bff;
+            color: #4a6bff;
+        }
+
+        .btn-outline:hover {
+            background: #4a6bff;
+            color: white;
+        }
+
+        /* Kirish konteyneri */
+        .login-container {
+            display: flex;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        /* Chap qism (rasm va ma'lumot) */
+        .login-left {
+            flex: 1;
+            background: linear-gradient(135deg, #4a6bff, #6a4bff);
+            color: white;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .login-left img {
+            width: 200px;
+            margin-bottom: 30px;
+        }
+
+        .login-left h1 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .login-left p {
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .features-list {
+            margin-top: 40px;
+            text-align: left;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 16px;
+        }
+
+        /* O'ng qism (forma) */
+        .login-form {
+            flex: 1;
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-header {
+            margin-bottom: 40px;
+        }
+
+        .form-header h2 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .form-header p {
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #444;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4a6bff;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 40px;
+            color: #777;
+            cursor: pointer;
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+
+        .remember-me input {
+            margin-right: 8px;
+        }
+
+        .remember-me label {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .forgot-password {
+            font-size: 14px;
+        }
+
+        .social-login {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .social-login p {
+            color: #666;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .social-login p::before,
+        .social-login p::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background: #ddd;
+        }
+
+        .social-login p::before {
+            left: 0;
+        }
+
+        .social-login p::after {
+            right: 0;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f7fa;
+            color: #555;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background: #4a6bff;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .register-link a {
+            font-weight: 500;
+        }
+
+        /* Xatolik xabarlari */
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        .form-group.error .form-control {
+            border-color: #e74c3c;
+        }
+
+        /* Responsivlik */
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+            }
+
+            .login-left {
+                padding: 40px 20px;
+            }
+
+            .login-form {
+                padding: 40px 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .remember-forgot {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .forgot-password {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            <!-- Chap qism (rasm va ma'lumot) -->
+            <div class="login-left">
+                <h1>PeerLearn jamoasiga qaytganingiz bilan!</h1>
+                <p>Bilim almashish, yangi narsalarni o'rganish va o'rgatish uchun eng yaxshi platformaga xush kelibsiz!</p>
+                
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div>
+                            <h3>O'z sohangiz mutaxassislari</h3>
+                            <p>O'zingizga qiziq bo'lgan sohalar bo'yicha mutaxassislar bilan bog'laning</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div>
+                            <h3>Jonli video darslar</h3>
+                            <p>Real vaqt rejimida o'qituvchilar va talabalar bilan interaktiv darslar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- O'ng qism (forma) -->
+            <div class="login-form">
+                <div class="form-header">
+                    <h2>Hisobingizga kiring</h2>
+                    <p>Ilovaning barcha imkoniyatlaridan foydalanish uchun tizimga kiring</p>
+                </div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Elektron pochta</label>
+                        <input type="email" id="email" class="form-control" placeholder="example@mail.com">
+                        <div class="error-message">Yaroqli elektron pochta manzili kiritilishi shart</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Parol</label>
+                        <input type="password" id="password" class="form-control" placeholder="Kamida 8 ta belgi">
+                        <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                        <div class="error-message">Parol kiritilishi shart</div>
+                    </div>
+
+                    <div class="remember-forgot">
+                        <div class="remember-me">
+                            <input type="checkbox" id="remember">
+                            <label for="remember">Eslab qolish</label>
+                        </div>
+                        <a href="#" class="forgot-password">Parolni unutdingizmi?</a>
+                    </div>
+
+                    <button type="submit" class="btn">Tizimga kirish</button>
+
+                    <div class="social-login">
+                        <p>yoki ijtimoiy tarmoqlar orqali kiring</p>
+                        <div class="social-icons">
+                            <a href="#" class="social-icon">
+                                <i class="fab fa-google"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="register-link">
+                        Hisobingiz yo'qmi? <a href="register.html">Ro'yxatdan o'tish</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Parolni ko'rsatish/yashirish
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this;
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Formani tekshirish
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let isValid = true;
+            
+            // Emailni tekshirish
+            const email = document.getElementById('email');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                email.parentElement.classList.add('error');
+                isValid = false;
+            } else {
+                email.parentElement.classList.remove('error');
+            }
+            
+            // Parolni tekshirish
+            const password = document.getElementById('password');
+            if (password.value.trim() === '') {
+                password.parentElement.classList.add('error');
+                isValid = false;
+            } else {
+                password.parentElement.classList.remove('error');
+            }
+            
+            // Agar hamma maydonlar to'g'ri to'ldirilgan bo'lsa
+            if (isValid) {
+                // Bu yerda haqiqiy ilova uchun kirish logikasi bo'lishi kerak
+                alert('Tizimga kirish muvaffaqiyatli amalga oshirildi!');
+                // O'tish sahifasiga yo'naltirish
+                // window.location.href = "dashboard.html";
+            }
+        });
+    </script>
+</body>
+</html>
